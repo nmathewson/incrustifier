@@ -1,0 +1,78 @@
+incrustify -- try all the uncrustify options
+============================================
+
+What you need
+-------------
+
+You will need Python.  I've tested this with Python 2.7.
+
+Run this program from a directory containing a copy of "defaults.cfg" from
+your uncrustify distribution.
+
+Make sure that "uncrustify" is in your path.
+
+How to run it
+-------------
+
+Take a few representative source files from your codebase, and run:
+
+  % ./incrustify.py file1 file2 ...
+
+Wait a long time.
+
+Look at the generated "result.cfg" file.  It will match your provided
+defaults.cfg file, except that it will have little results sections after
+some of the options.  These results sections will start with ##, so your
+result.cfg file will look like:
+
+    # The number of columns to indent per level.
+    # Usually 2, 3, 4, or 8.
+    indent_columns                           = 8        # number
+    ##                2:  16157
+    ##                4:  16233
+    ##                8:   2546
+
+    # Whether braces are indented to the body level
+    indent_braces                            = false    # false/true
+    ##            false:   2546
+    ##             true:   5176
+
+The format of a result line is "option value: Change size", where option
+value is a possible value for the option, and change size is the number of
+lines changed for all files when you set that option to that value.
+
+How to use the results
+----------------------
+
+The main purpose of this program is to help you figure out good options to
+pass to uncrustify for beautifying an existing codebase.  So generally, your
+code will already have lots of existing inconsistent style.  In such cases,
+you'll probably either want to *change nothing*, or *choose whichever style
+is already most popular in your codebase*.
+
+So you can go option by option, and look to see which value leads to the
+fewest changed lines.  When there is a "make no change" option value (usually
+'ignore' or 'false'), that value will of course mean the least changes to
+your codebase... but often, one of the other value will have a pretty low
+change count too.  If so, that value if 
+
+If every value *except* 'ignore' has a high change count, your code doesn't
+have a consistent style for the option in question.
+
+If all option values have the same change count, maybe your code doesn't use
+anything affected by that option, or maybe there is some other option that
+would need to get turned on for uncrustify to notice this option.
+
+Have fun!
+
+Limitations
+-----------
+
+It doesn't try all the numeric options.
+
+It doesn't try options in combinations.
+
+It doesn't enable options' prerequisites before testing them.
+
+There aren't enough comments for anybody to hack on the code without
+understanding it.
